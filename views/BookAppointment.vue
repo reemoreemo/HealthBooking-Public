@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <nav class="navbar navbar-light bg-white shadow-sm mb-4">
@@ -11,13 +10,16 @@
     <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
       <div class="card shadow p-5" style="width: 100%; max-width: 700px;">
         <h2 class="text-center mb-4 text-primary">Book an Appointment</h2>
+
         <form class="row g-3" @submit.prevent="submitAppointment">
           <div class="col-12">
             <input v-model="name" type="text" class="form-control" placeholder="Your Name" required />
           </div>
+
           <div class="col-12">
             <input v-model="symptoms" type="text" class="form-control" placeholder="Symptoms" required />
           </div>
+
           <div class="col-12">
             <select v-model="selectedSlot" class="form-select" required>
               <option disabled value="">Select a Time Slot</option>
@@ -26,6 +28,7 @@
               </option>
             </select>
           </div>
+
           <div class="col-12">
             <button type="submit" class="btn btn-primary w-100">Book</button>
           </div>
@@ -36,6 +39,8 @@
 </template>
 
 <script>
+const API_BASE_URL = "https://2ela1ukdsb.execute-api.eu-north-1.amazonaws.com";
+
 export default {
   name: "BookAppointment",
   data() {
@@ -46,15 +51,24 @@ export default {
       slots: []
     };
   },
+
   mounted() {
-    fetch("https://2ela1ukdsb.execute-api.eu-north-1.amazonaws.com/slots")
-      .then(res => res.json())
-      .then(data => {
-        const parsed = JSON.parse(data.body);
-        this.slots = parsed.filter(s => !s.isBooked).map(s => s.slot);
-      });
+    this.fetchSlots();
   },
+
   methods: {
+    fetchSlots() {
+      fetch(`${API_BASE_URL}/slots`)
+        .then(res => res.json())
+        .then(data => {
+          const slotsData = Array.isArray(data) ? data : JSON.parse(data.body);
+          this.slots = slotsData.filter(s => !s.isBooked).map(s => s.slot);
+        })
+        .catch(err => {
+          console.error("Error fetching slots:", err);
+        });
+    },
+
     submitAppointment() {
       const payload = {
         patientName: this.name,
@@ -62,10 +76,12 @@ export default {
         slot: this.selectedSlot
       };
 
-     fetch("https://2ela1ukdsb.execute-api.eu-north-1.amazonaws.com/appointments", {
+      fetch(`${API_BASE_URL}/appointments`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: JSON.stringify(payload) })
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
       })
         .then(res => res.json())
         .then(() => {
@@ -73,6 +89,7 @@ export default {
           this.name = "";
           this.symptoms = "";
           this.selectedSlot = "";
+          this.fetchSlots();
         })
         .catch(err => {
           console.error("Error booking appointment:", err);
