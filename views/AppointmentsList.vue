@@ -77,6 +77,13 @@ export default {
     updateStatus(appointment, newStatus) {
       const appointmentId = appointment.appointmentID || appointment.appointmentId;
 
+const url = `${API_BASE_URL}/appointments/${appointmentId}`;
+
+const payload = {
+  appointmentID: appointmentId,
+  status: newStatus
+};
+
       const url = `${API_BASE_URL}/appointments/${appointmentId}`;
 
     const payload = {
