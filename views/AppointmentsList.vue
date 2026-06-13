@@ -24,7 +24,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="appointment in appointments" :key="appointment.appointmentID || appointment.appointmentId">
+              <tr v-for="appointment in appointments" :key="appointment.appointmentID || appointment.appointmentID">
                 <td>{{ appointment.patientName }}</td>
                 <td>{{ appointment.symptoms }}</td>
                 <td>{{ appointment.slot }}</td>
