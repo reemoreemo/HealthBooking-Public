@@ -12,6 +12,7 @@
         <div class="card-header">
           <h5 class="mb-0">Appointments</h5>
         </div>
+
         <div class="card-body p-0">
           <table class="table table-bordered table-striped mb-0">
             <thead class="table-light">
@@ -23,8 +24,9 @@
                 <th>Update</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr v-for="appointment in appointments" :key="appointment.appointmentID || appointment.appointmentID">
+              <tr v-for="appointment in appointments" :key="appointment.appointmentID">
                 <td>{{ appointment.patientName }}</td>
                 <td>{{ appointment.symptoms }}</td>
                 <td>{{ appointment.slot }}</td>
@@ -42,6 +44,7 @@
                 </td>
               </tr>
             </tbody>
+
           </table>
         </div>
       </div>
@@ -54,14 +57,17 @@ const API_BASE_URL = "https://2ela1ukdsb.execute-api.eu-north-1.amazonaws.com";
 
 export default {
   name: "AppointmentsList",
+
   data() {
     return {
       appointments: []
     };
   },
+
   mounted() {
     this.fetchAppointments();
   },
+
   methods: {
     fetchAppointments() {
       fetch(`${API_BASE_URL}/appointments`)
@@ -75,23 +81,14 @@ export default {
     },
 
     updateStatus(appointment, newStatus) {
-      const appointmentId = appointment.appointmentID || appointment.appointmentId;
+      const appointmentId = appointment.appointmentID;
 
-const url = `${API_BASE_URL}/appointments/${appointmentId}`;
+      const payload = {
+        appointmentID: appointmentId,
+        status: newStatus
+      };
 
-const payload = {
-  appointmentID: appointmentId,
-  status: newStatus
-};
-
-      const url = `${API_BASE_URL}/appointments/${appointmentId}`;
-
-    const payload = {
-  appointmentID: appointmentId,
-  status: newStatus
-};
-
-      fetch(url, {
+      fetch(`${API_BASE_URL}/appointments/${appointmentId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
