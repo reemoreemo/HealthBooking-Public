@@ -79,9 +79,10 @@ export default {
 
       const url = `${API_BASE_URL}/appointments/${appointmentId}`;
 
-      const payload = {
-        status: newStatus
-      };
+    const payload = {
+  appointmentID: appointmentId,
+  status: newStatus
+};
 
       fetch(url, {
         method: "PATCH",
